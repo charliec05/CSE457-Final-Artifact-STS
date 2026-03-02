@@ -1,0 +1,118 @@
+# Unity .gitignore (recommended baseline)
+# Source: GitHub's official Unity.gitignore (with common additions)
+# Keep this file at repo root
+
+# ========== OS / Editor ==========
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# VS / Rider / MonoDevelop / JetBrains
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+*.VC.VC.opendb
+
+# Gradle / Android Studio
+.gradle/
+**/build/
+*.apk
+*.aab
+
+# ========== Unity generated ==========
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+[Mm]emoryCaptures/
+
+# Recordings can be large; ignore by default
+/[Rr]ecordings/
+
+# Unity cache / artifacts
+*.unitypackage.meta
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+*.opendb.meta
+
+# Crash reports
+sysinfo.txt
+
+# ========== Packages ==========
+# Ignore resolved packages cache (Unity regenerates). Keep manifest + lock.
+# (Packages/manifest.json and Packages/packages-lock.json should be committed.)
+/Packages/*/        # If you use embedded packages, remove this line.
+# NOTE: If you plan to use local embedded packages inside Packages/,
+# delete the previous rule and only ignore the cache below:
+# /Library/PackageCache/
+
+# ========== Asset Store tools (optional) ==========
+# Uncomment if you use Unity Asset Store Tools
+# /Assets/AssetStoreTools*
+
+# ========== Addressables (optional) ==========
+# If you build Addressables locally, these are generated.
+# Commit only if your pipeline requires them.
+# /ServerData/
+# /Assets/AddressableAssetsData/*/*.bin*
+
+# ========== Auto-generated solution / project files ==========
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# ========== IL2CPP / Builds ==========
+# Keep build outputs out of git (use CI to produce builds)
+# (Already covered by Build/Builds/, but keep these common ones too.)
+/ExportedObj/
+/.gradle/
+/.vs/
+
+# ========== Tests / Coverage ==========
+[Test]Results/
+CoverageResults/
+*.coverage
+*.coveragexml
+
+# ========== Unity Collaborate ==========
+.collabignore
+
+# ========== StreamingAssets (optional) ==========
+# If you generate/patch content at runtime and don't want it in git:
+# /Assets/StreamingAssets/*
+
+# ========== Local config ==========
+*.log
+*.bak
+*.swp
+*.orig
+
+# ========== LFS lock files (optional) ==========
+# If using Git LFS locks, keep lock metadata out of repo:
+# *.lfslock
