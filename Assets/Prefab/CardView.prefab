@@ -772,6 +772,7 @@ GameObject:
   - component: {fileID: 7749475787532267300}
   - component: {fileID: 5906850270627493071}
   - component: {fileID: 5534882513131355168}
+  - component: {fileID: 6719763905421870937}
   m_Layer: 0
   m_Name: CardView
   m_TagString: Untagged
@@ -833,3 +834,16 @@ MonoBehaviour:
   mana: {fileID: 5649821878104204804}
   imageSR: {fileID: 2412403380259965813}
   wrapper: {fileID: 1089139769951483513}
+--- !u!210 &6719763905421870937
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8265963539379527336}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortAtRoot: 0
+  m_Sort3DAs2D: 0
