@@ -15,6 +15,12 @@ public class HandView : MonoBehaviour
         yield return UpdateCardPosition(0.15f);
     }
 
+    public void RemoveCard(CardView cardView)
+    {
+        cards.Remove(cardView);
+        StartCoroutine(UpdateCardPosition(0.15f));
+    }
+
     private IEnumerator UpdateCardPosition(float duration)
     {
         if (cards.Count == 0) yield break;

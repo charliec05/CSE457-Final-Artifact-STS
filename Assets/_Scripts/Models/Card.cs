@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Card
@@ -9,6 +10,12 @@ public class Card
     public Sprite Image => data.Image;
 
     public int Mana { get; private set; }
+
+    public CardTargetType TargetType => data.TargetType;
+
+    public IReadOnlyList<CardEffect> Effects => data.Effects;
+
+    public CardData Data => data;
 
     private readonly CardData data;
 
