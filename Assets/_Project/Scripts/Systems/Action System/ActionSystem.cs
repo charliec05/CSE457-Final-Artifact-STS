@@ -77,17 +77,14 @@ public class ActionSystem : Singleton<ActionSystem>
 
     private IEnumerator Flow(GameAction action, Action OnFlowFinished = null)
     {
-        // 1) Run pre-reactions and pre-subscribers.
         reactions = action.PreReactions;
         PerformSubscribers(action, preSubscribers);
         yield return PerformReactions();
 
-        // 2) Run the action performer and any generated reactions.
         reactions = action.PerformReactions;
         yield return PerformPerformer(action);
         yield return PerformReactions();
 
-        // 3) Run post-reactions and post-subscribers.
         reactions = action.PostReactions;
         PerformSubscribers(action, postSubscribers);
         yield return PerformReactions();

@@ -20,11 +20,6 @@ public class DamageSystem : MonoBehaviour
         ActionSystem.AttachPerformer<DealDamageGA>(DealDamagePerformer);
     }
 
-    private void OnDisable()
-    {
-        ActionSystem.DetachPerformer<DealDamageGA>();
-    }
-
     private IEnumerator DealDamagePerformer(DealDamageGA dealDamageGA)
     {
         foreach (CombatantView target in dealDamageGA.Targets)

@@ -22,6 +22,12 @@ public class CombatantView : MonoBehaviour
         UpdateHealthText();
     }
 
+    public void SetCurrentHealth(int health)
+    {
+        CurrentHealth = Mathf.Clamp(health, 0, MaxHealth);
+        UpdateHealthText();
+    }
+
     public void Damage(int damageAmount)
     {
         CurrentHealth -= damageAmount;

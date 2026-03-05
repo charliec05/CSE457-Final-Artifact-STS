@@ -25,15 +25,6 @@ public class CardSystem : Singleton<CardSystem>
         ActionSystem.SubscribeReaction<EnemyTurnGA>(EnemyTurnPostReaction, ReactionTiming.POST);
     }
 
-    private void OnDisable()
-    {
-        ActionSystem.DetachPerformer<DrawCardsGA>();
-        ActionSystem.DetachPerformer<DiscardAllCardsGA>();
-        ActionSystem.DetachPerformer<PlayCardGA>();
-        ActionSystem.UnsubscribeReaction<EnemyTurnGA>(EnemyTurnPreReaction, ReactionTiming.PRE);
-        ActionSystem.UnsubscribeReaction<EnemyTurnGA>(EnemyTurnPostReaction, ReactionTiming.POST);
-    }
-
     public void Setup(List<CardData> deckData)
     {
         foreach (CardData cardData in deckData)
