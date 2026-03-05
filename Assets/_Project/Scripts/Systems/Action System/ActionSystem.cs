@@ -124,6 +124,13 @@ public class ActionSystem : Singleton<ActionSystem>
         }
     }
 
+    public static void ClearAll()
+    {
+        preSubscribers.Clear();
+        performers.Clear();
+        postSubscribers.Clear();
+    }
+
     private static Dictionary<Type, List<Action<GameAction>>> GetSubscribersForTiming(ReactionTiming timing)
     {
         return timing == ReactionTiming.PRE ? preSubscribers : postSubscribers;

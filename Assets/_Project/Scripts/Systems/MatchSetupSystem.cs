@@ -12,6 +12,9 @@ public class MatchSetupSystem : MonoBehaviour
 
     private void Start()
     {
+        if (MatchResultSystem.Instance == null)
+            new GameObject("MatchResultSystem").AddComponent<MatchResultSystem>();
+
         HeroSystem.Instance.Setup(heroData);
         EnemySystem.Instance.Setup(enemyDataList);
         CardSystem.Instance.Setup(heroData.Deck);

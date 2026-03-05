@@ -9,6 +9,9 @@ public class Interactions : Singleton<Interactions>
 
     public bool PlayerCanInteract()
     {
+        if (MatchResultSystem.Instance != null && MatchResultSystem.Instance.IsMatchOver)
+            return false;
+
         return !ActionSystem.Instance.IsPerforming;
     }
 

@@ -42,8 +42,7 @@ public class DamageSystem : MonoBehaviour
                 }
                 else
                 {
-                    // Do some game over logic here or something
-                    // Open Game Over Scene
+                    ActionSystem.Instance.AddReaction(new GameOverGA());
                 }
             }
         }
