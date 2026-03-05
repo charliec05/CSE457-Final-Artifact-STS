@@ -28,20 +28,26 @@ public class Perk
 
     private void Reaction(GameAction gameAction)
     {
-        if (condition.SubConditionIsMet(gameAction))
+        if (!condition.SubConditionIsMet(gameAction))
         {
-            List<CombatantView> targets = new();
-            if (data.UseActionCasterAsTarget && gameAction is IHaveCaster haveCaster)
-            {
-                targets.Add(haveCaster.Caster);
-            }
-            if (data.UseAutoTarget)
-            {
-                targets.AddRange(autoTargetEffect.TargetMode.GetTargets());
-            }
-
-            GameAction perkEffectAction = autoTargetEffect.Effect.GetGameAction(targets, HeroSystem.Instance.HeroView);
-            ActionSystem.Instance.AddReaction(perkEffectAction);
+            return;
         }
+
+        List<CombatantView> targets = CollectTargets(gameAction);
+        GameAction perkEffectAction = autoTargetEffect.Effect.GetGameAction(targets, HeroSystem.Instance.HeroView);
+        ActionSystem.Instance.AddReaction(perkEffectAction);
+    }
+
+    private List<CombatantView> CollectTargets(GameAction gameAction)
+    {
+        List<CombatantView> targets = new();
+
+        if (data.UseActionCasterAsTarget && gameAction is IHaveCaster haveCaster)
+            targets.Add(haveCaster.Caster);
+
+        if (data.UseAutoTarget)
+            targets.AddRange(autoTargetEffect.TargetMode.GetTargets());
+
+        return targets;
     }
 }

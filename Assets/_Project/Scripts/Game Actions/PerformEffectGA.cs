@@ -1,7 +1,4 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class PerformEffectGA : GameAction
 {
@@ -11,6 +8,6 @@ public class PerformEffectGA : GameAction
     public PerformEffectGA(Effect effect, List<CombatantView> targets)
     {
         Effect = effect;
-        Targets = targets == null ? null : new(targets);
+        Targets = targets == null ? null : new List<CombatantView>(targets);
     }
 }

@@ -1,8 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class AttackHeroGA : GameAction, IHaveCaster
 {
     public EnemyView Attacker { get; private set; }
@@ -12,6 +7,6 @@ public class AttackHeroGA : GameAction, IHaveCaster
     public AttackHeroGA(EnemyView attacker)
     {
         Attacker = attacker;
-        Caster = Attacker;
+        Caster = attacker;
     }
 }

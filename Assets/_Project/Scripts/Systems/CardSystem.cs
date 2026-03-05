@@ -1,5 +1,4 @@
 using DG.Tweening;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -48,25 +47,25 @@ public class CardSystem : Singleton<CardSystem>
     private IEnumerator DrawCardsPerformer(DrawCardsGA drawCardsGA)
     {
         int actualAmount = Mathf.Min(drawCardsGA.Amount, drawPile.Count);
-        int notDrawnAmount = drawCardsGA.Amount - actualAmount;
+        int remainingToDraw = drawCardsGA.Amount - actualAmount;
 
         for (int i = 0; i < actualAmount; i++)
         {
             yield return DrawCard();
         }
 
-        if (notDrawnAmount > 0)
+        if (remainingToDraw > 0)
         {
             RefillDeck();
 
-            for (int i = 0; i < notDrawnAmount; i++)
+            for (int i = 0; i < remainingToDraw; i++)
             {
                 yield return DrawCard();
             }
         }
     }
 
-    private IEnumerator DiscardAllCardsPerformer(DiscardAllCardsGA discardAllCardsGA)
+    private IEnumerator DiscardAllCardsPerformer(DiscardAllCardsGA _)
     {
         foreach (Card card in hand)
         {
@@ -90,13 +89,13 @@ public class CardSystem : Singleton<CardSystem>
     #endregion
 
     #region Reactions
-    private void EnemyTurnPreReaction(EnemyTurnGA enemyTurnGA)
+    private void EnemyTurnPreReaction(EnemyTurnGA _)
     {
         DiscardAllCardsGA discardAllCardsGA = new();
         ActionSystem.Instance.AddReaction(discardAllCardsGA);
     }
 
-    private void EnemyTurnPostReaction(EnemyTurnGA enemyTurnGA)
+    private void EnemyTurnPostReaction(EnemyTurnGA _)
     {
         DrawCardsGA drawCardsGA = new(enemyDrawCardsAmount);
         ActionSystem.Instance.AddReaction(drawCardsGA);
@@ -138,7 +137,7 @@ public class CardSystem : Singleton<CardSystem>
         if (playCardGA.Card.ManualTargetEffect != null)
         {
             PerformEffectGA performEffectGA = new(playCardGA.Card.ManualTargetEffect, new() { playCardGA.ManualTarget });
-            ActionSystem.Instance.AddReaction(performEffectGA);
+            QueueEffectReaction(performEffectGA);
         }
     }
 
@@ -148,8 +147,13 @@ public class CardSystem : Singleton<CardSystem>
         {
             List<CombatantView> targets = effectWrapper.TargetMode.GetTargets();
             PerformEffectGA performEffectGA = new(effectWrapper.Effect, targets);
-            ActionSystem.Instance.AddReaction(performEffectGA);
+            QueueEffectReaction(performEffectGA);
         }
+    }
+
+    private void QueueEffectReaction(PerformEffectGA performEffectGA)
+    {
+        ActionSystem.Instance.AddReaction(performEffectGA);
     }
     #endregion
 }

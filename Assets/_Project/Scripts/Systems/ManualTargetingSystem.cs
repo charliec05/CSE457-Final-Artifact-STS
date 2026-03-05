@@ -18,13 +18,19 @@ public class ManualTargetingSystem : Singleton<ManualTargetingSystem>
     {
         arrowView.gameObject.SetActive(false);
 
-        if (Physics.Raycast(endPosition, Vector3.forward, out RaycastHit hit, 10f, targetLayerMask)
+        return TryGetTargetedEnemy(endPosition, out EnemyView enemyView) ? enemyView : null;
+    }
+
+    private bool TryGetTargetedEnemy(Vector3 worldPoint, out EnemyView enemyView)
+    {
+        if (Physics.Raycast(worldPoint, Vector3.forward, out RaycastHit hit, 10f, targetLayerMask)
             && hit.collider != null
-            && hit.transform.TryGetComponent(out EnemyView enemyView))
+            && hit.transform.TryGetComponent(out enemyView))
         {
-            return enemyView;
+            return true;
         }
 
-        return null;
+        enemyView = null;
+        return false;
     }
 }
