@@ -20,12 +20,80 @@ public class MatchSetupSystem : MonoBehaviour
         List<EnemyData> waveEnemies = WaveManager.GetEnemiesForCurrentWave();
         EnemySystem.Instance.Setup(waveEnemies);
 
-        CardSystem.Instance.Setup(heroData.Deck);
+        List<CardData> deck = BuildDeck();
+        CardSystem.Instance.Setup(deck);
         PerkSystem.Instance.AddPerk(new Perk(perkData));
 
         WaveUI.Create(WaveManager.CurrentWave + 1, WaveManager.TotalWaves, WaveManager.GetWaveName());
 
         DrawCardsGA drawCardsGA = new(startingHandSize);
         ActionSystem.Instance.Perform(drawCardsGA);
+    }
+
+    private List<CardData> BuildDeck()
+    {
+        Sprite attackImg = GetCardSprite(0);
+        Sprite spellImg = GetCardSprite(1);
+
+        List<CardData> deck = new();
+
+        // 4x Strike — 1 mana, deal 6 damage (manual target)
+        for (int i = 0; i < 4; i++)
+            deck.Add(CardData.CreateRuntime(
+                "Strike", "Deal 6 damage", 1, attackImg,
+                new DealDamageEffect(6), null));
+
+        // 3x Defend — 1 mana, gain 5 block (self)
+        for (int i = 0; i < 3; i++)
+            deck.Add(CardData.CreateRuntime(
+                "Defend", "Gain 5 Block", 1, spellImg,
+                null, new List<AutoTargetEffect> {
+                    new(new SelfTM(), new GainBlockEffect(5))
+                }));
+
+        // 2x Heal — 1 mana, restore 5 HP (self)
+        for (int i = 0; i < 2; i++)
+            deck.Add(CardData.CreateRuntime(
+                "Heal", "Restore 5 HP", 1, spellImg,
+                null, new List<AutoTargetEffect> {
+                    new(new SelfTM(), new HealEffect(5))
+                }));
+
+        // 1x Power Strike — 2 mana, deal 14 damage (manual target)
+        deck.Add(CardData.CreateRuntime(
+            "Power Strike", "Deal 14 damage", 2, attackImg,
+            new DealDamageEffect(14), null));
+
+        // 1x Cleave — 1 mana, deal 4 damage to ALL enemies
+        deck.Add(CardData.CreateRuntime(
+            "Cleave", "Deal 4 damage to ALL enemies", 1, attackImg,
+            null, new List<AutoTargetEffect> {
+                new(new AllEnemiesTM(), new DealDamageEffect(4))
+            }));
+
+        // 1x Whirlwind — 2 mana, deal 8 damage to ALL enemies
+        deck.Add(CardData.CreateRuntime(
+            "Whirlwind", "Deal 8 damage to ALL enemies", 2, attackImg,
+            null, new List<AutoTargetEffect> {
+                new(new AllEnemiesTM(), new DealDamageEffect(8))
+            }));
+
+        // 1x Battle Trance — 0 mana, draw 2 cards
+        deck.Add(CardData.CreateRuntime(
+            "Battle Trance", "Draw 2 cards", 0, spellImg,
+            null, new List<AutoTargetEffect> {
+                new(new NoTM(), new DrawCardsEffect(2))
+            }));
+
+        return deck;
+    }
+
+    private Sprite GetCardSprite(int index)
+    {
+        if (heroData.Deck != null && heroData.Deck.Count > index)
+            return heroData.Deck[index].Image;
+        if (heroData.Deck != null && heroData.Deck.Count > 0)
+            return heroData.Deck[0].Image;
+        return null;
     }
 }

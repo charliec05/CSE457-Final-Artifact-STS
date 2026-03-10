@@ -11,4 +11,18 @@ public class CardData : ScriptableObject
     [field: SerializeField] public int Mana { get; private set; }
     [field: SerializeReference, SR] public Effect ManualTargetEffect { get; private set; } = null;
     [field: SerializeField] public List<AutoTargetEffect> OtherEffects { get; private set; }
+
+    public static CardData CreateRuntime(
+        string title, string description, int mana, Sprite image,
+        Effect manualTargetEffect, List<AutoTargetEffect> otherEffects)
+    {
+        CardData data = CreateInstance<CardData>();
+        data.Title = title;
+        data.Description = description;
+        data.Mana = mana;
+        data.Image = image;
+        data.ManualTargetEffect = manualTargetEffect;
+        data.OtherEffects = otherEffects ?? new();
+        return data;
+    }
 }

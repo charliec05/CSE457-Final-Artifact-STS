@@ -18,6 +18,10 @@ public class DamageSystem : MonoBehaviour
     private void OnEnable()
     {
         ActionSystem.AttachPerformer<DealDamageGA>(DealDamagePerformer);
+        ActionSystem.AttachPerformer<HealGA>(HealPerformer);
+        ActionSystem.AttachPerformer<GainBlockGA>(GainBlockPerformer);
+
+        ActionSystem.SubscribeReaction<EnemyTurnGA>(ResetHeroBlock, ReactionTiming.POST);
     }
 
     private IEnumerator DealDamagePerformer(DealDamageGA dealDamageGA)
@@ -41,5 +45,28 @@ public class DamageSystem : MonoBehaviour
                 }
             }
         }
+    }
+
+    private IEnumerator HealPerformer(HealGA healGA)
+    {
+        foreach (CombatantView target in healGA.Targets)
+        {
+            target.Heal(healGA.Amount);
+        }
+        yield return damageWaitForSeconds;
+    }
+
+    private IEnumerator GainBlockPerformer(GainBlockGA gainBlockGA)
+    {
+        foreach (CombatantView target in gainBlockGA.Targets)
+        {
+            target.GainBlock(gainBlockGA.Amount);
+        }
+        yield return null;
+    }
+
+    private void ResetHeroBlock(EnemyTurnGA _)
+    {
+        HeroSystem.Instance.HeroView.ResetBlock();
     }
 }
