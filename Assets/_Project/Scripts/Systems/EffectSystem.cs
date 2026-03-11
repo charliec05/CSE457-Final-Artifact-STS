@@ -10,11 +10,6 @@ public class EffectSystem : MonoBehaviour
         ActionSystem.AttachPerformer<PerformEffectGA>(PerformEffectPerformer);
     }
 
-    private void OnDisable()
-    {
-        ActionSystem.DetachPerformer<PerformEffectGA>();
-    }
-
     #region Performers
     private IEnumerator PerformEffectPerformer(PerformEffectGA performEffectGA)
     {

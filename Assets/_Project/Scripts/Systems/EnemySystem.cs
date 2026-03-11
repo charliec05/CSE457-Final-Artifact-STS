@@ -18,13 +18,7 @@ public class EnemySystem : Singleton<EnemySystem>
         ActionSystem.AttachPerformer<EnemyTurnGA>(EnemyTurnPerformer);
         ActionSystem.AttachPerformer<AttackHeroGA>(AttackHeroPerformer);
         ActionSystem.AttachPerformer<KillEnemyGA>(KillEnemyPerformer);
-    }
-
-    private void OnDisable()
-    {
-        ActionSystem.DetachPerformer<EnemyTurnGA>();
-        ActionSystem.DetachPerformer<AttackHeroGA>();
-        ActionSystem.DetachPerformer<KillEnemyGA>();
+        ActionSystem.AttachPerformer<SpawnNextWaveGA>(SpawnNextWavePerformer);
     }
 
     public void Setup(List<EnemyData> enemyDataList)
@@ -60,6 +54,24 @@ public class EnemySystem : Singleton<EnemySystem>
     private IEnumerator KillEnemyPerformer(KillEnemyGA killEnemyGA)
     {
         yield return enemyBoardView.RemoveEnemy(killEnemyGA.EnemyView);
+    }
+
+    private IEnumerator SpawnNextWavePerformer(SpawnNextWaveGA _)
+    {
+        WaveManager.AdvanceWave();
+
+        int wave = WaveManager.CurrentWave;
+        WaveUI.UpdateWave(wave + 1, WaveManager.TotalWaves, WaveManager.GetWaveName());
+
+        yield return new WaitForSeconds(0.8f);
+
+        List<EnemyData> waveEnemies = WaveManager.GetEnemiesForCurrentWave();
+        foreach (EnemyData enemyData in waveEnemies)
+        {
+            enemyBoardView.AddEnemy(enemyData);
+        }
+
+        yield return new WaitForSeconds(0.3f);
     }
     #endregion
 }

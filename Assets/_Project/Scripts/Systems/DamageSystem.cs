@@ -18,18 +18,29 @@ public class DamageSystem : MonoBehaviour
     private void OnEnable()
     {
         ActionSystem.AttachPerformer<DealDamageGA>(DealDamagePerformer);
-    }
+        ActionSystem.AttachPerformer<HealGA>(HealPerformer);
+        ActionSystem.AttachPerformer<GainBlockGA>(GainBlockPerformer);
+        ActionSystem.AttachPerformer<ApplyStatusGA>(ApplyStatusPerformer);
 
-    private void OnDisable()
-    {
-        ActionSystem.DetachPerformer<DealDamageGA>();
+        ActionSystem.SubscribeReaction<EnemyTurnGA>(ResetHeroBlock, ReactionTiming.POST);
+        ActionSystem.SubscribeReaction<EnemyTurnGA>(TickHeroStatus, ReactionTiming.POST);
     }
 
     private IEnumerator DealDamagePerformer(DealDamageGA dealDamageGA)
     {
+        int baseDamage = dealDamageGA.Amount;
+
+        if (dealDamageGA.Caster != null)
+            baseDamage += dealDamageGA.Caster.GetStatus(StatusEffect.Strength);
+
         foreach (CombatantView target in dealDamageGA.Targets)
         {
-            target.Damage(dealDamageGA.Amount);
+            int finalDamage = baseDamage;
+
+            if (target.GetStatus(StatusEffect.Vulnerable) > 0)
+                finalDamage = Mathf.RoundToInt(finalDamage * 1.5f);
+
+            target.Damage(finalDamage);
             Instantiate(damageVFX, target.transform.position, Quaternion.identity);
             yield return damageWaitForSeconds;
 
@@ -45,6 +56,48 @@ public class DamageSystem : MonoBehaviour
                     ActionSystem.Instance.AddReaction(new GameOverGA());
                 }
             }
+        }
+    }
+
+    private IEnumerator HealPerformer(HealGA healGA)
+    {
+        foreach (CombatantView target in healGA.Targets)
+        {
+            target.Heal(healGA.Amount);
+        }
+        yield return damageWaitForSeconds;
+    }
+
+    private IEnumerator GainBlockPerformer(GainBlockGA gainBlockGA)
+    {
+        foreach (CombatantView target in gainBlockGA.Targets)
+        {
+            target.GainBlock(gainBlockGA.Amount);
+        }
+        yield return null;
+    }
+
+    private IEnumerator ApplyStatusPerformer(ApplyStatusGA applyStatusGA)
+    {
+        foreach (CombatantView target in applyStatusGA.Targets)
+        {
+            target.ApplyStatus(applyStatusGA.Effect, applyStatusGA.Stacks);
+        }
+        yield return null;
+    }
+
+    private void ResetHeroBlock(EnemyTurnGA _)
+    {
+        HeroSystem.Instance.HeroView.ResetBlock();
+    }
+
+    private void TickHeroStatus(EnemyTurnGA _)
+    {
+        HeroSystem.Instance.HeroView.TickStatusEffects();
+
+        foreach (EnemyView enemy in EnemySystem.Instance.Enemies)
+        {
+            enemy.TickStatusEffects();
         }
     }
 }

@@ -76,10 +76,17 @@ public class CardView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         if (Card.ManualTargetEffect != null)
         {
             EnemyView target = ManualTargetingSystem.Instance.EndTargeting(MouseUtils.GetMousePositionInWorldSpace(mousePositionZValue));
-            if (target != null && ManaSystem.Instance.HasEnoughMana(Card.Mana))
+            if (target != null)
             {
-                PlayCardGA playCardGA = new(Card, target);
-                ActionSystem.Instance.Perform(playCardGA);
+                if (ManaSystem.Instance.HasEnoughMana(Card.Mana))
+                {
+                    PlayCardGA playCardGA = new(Card, target);
+                    ActionSystem.Instance.Perform(playCardGA);
+                }
+                else
+                {
+                    ManaSystem.Instance.NotifyInsufficientMana();
+                }
             }
         }
         else
@@ -112,6 +119,10 @@ public class CardView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         }
         else
         {
+            bool inDropZone = Physics.Raycast(transform.position, Vector3.forward, out _, mouseUpRaycastDistance, dropAreaLayer);
+            if (inDropZone && !ManaSystem.Instance.HasEnoughMana(Card.Mana))
+                ManaSystem.Instance.NotifyInsufficientMana();
+
             transform.SetPositionAndRotation(dragStartPosition, dragStartRotation);
         }
     }

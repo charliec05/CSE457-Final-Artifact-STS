@@ -12,6 +12,9 @@ public class Interactions : Singleton<Interactions>
         if (MatchResultSystem.Instance != null && MatchResultSystem.Instance.IsMatchOver)
             return false;
 
+        if (ActionSystem.Instance == null)
+            return false;
+
         return !ActionSystem.Instance.IsPerforming;
     }
 

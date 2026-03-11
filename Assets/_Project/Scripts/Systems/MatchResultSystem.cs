@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using DG.Tweening;
 using TMPro;
@@ -20,27 +21,30 @@ public class MatchResultSystem : Singleton<MatchResultSystem>
         ActionSystem.SubscribeReaction<KillEnemyGA>(CheckVictoryCondition, ReactionTiming.POST);
     }
 
-    private void OnDisable()
-    {
-        ActionSystem.DetachPerformer<GameOverGA>();
-        ActionSystem.DetachPerformer<GameWonGA>();
-        ActionSystem.UnsubscribeReaction<KillEnemyGA>(CheckVictoryCondition, ReactionTiming.POST);
-    }
-
     private void CheckVictoryCondition(KillEnemyGA _)
     {
         if (IsMatchOver) return;
+        if (EnemySystem.Instance.Enemies.Count > 0) return;
 
-        if (EnemySystem.Instance.Enemies.Count == 0)
+        if (WaveManager.IsLastWave)
             ActionSystem.Instance.AddReaction(new GameWonGA());
+        else
+            ActionSystem.Instance.AddReaction(new SpawnNextWaveGA());
     }
 
+    #region Performers
     private IEnumerator GameOverPerformer(GameOverGA _)
     {
         if (IsMatchOver) yield break;
         IsMatchOver = true;
         yield return new WaitForSeconds(showDelay);
-        ShowResultScreen("DEFEAT", new Color(0.9f, 0.2f, 0.2f));
+
+        ShowResultScreen(
+            "DEFEAT",
+            new Color(0.9f, 0.2f, 0.2f),
+            "Try Again",
+            RestartGame
+        );
     }
 
     private IEnumerator GameWonPerformer(GameWonGA _)
@@ -48,16 +52,24 @@ public class MatchResultSystem : Singleton<MatchResultSystem>
         if (IsMatchOver) yield break;
         IsMatchOver = true;
         yield return new WaitForSeconds(showDelay);
-        ShowResultScreen("VICTORY!", new Color(1f, 0.84f, 0f));
+
+        ShowResultScreen(
+            "VICTORY!",
+            new Color(1f, 0.84f, 0f),
+            "Play Again",
+            RestartGame
+        );
     }
+    #endregion
 
     #region Programmatic UI
-    private void ShowResultScreen(string message, Color titleColor)
+    private void ShowResultScreen(string message, Color titleColor, string buttonLabel, Action onButtonClick)
     {
         GameObject canvasObj = CreateResultCanvas();
         RectTransform overlay = CreateOverlayPanel(canvasObj.transform);
         CreateTitleText(overlay, message, titleColor);
-        CreateRestartButton(overlay);
+        CreateSubtitleText(overlay);
+        CreateActionButton(overlay, buttonLabel, onButtonClick);
     }
 
     private GameObject CreateResultCanvas()
@@ -101,15 +113,38 @@ public class MatchResultSystem : Singleton<MatchResultSystem>
         RectTransform rt = titleObj.GetComponent<RectTransform>();
         rt.anchorMin = new Vector2(0.5f, 0.6f);
         rt.anchorMax = new Vector2(0.5f, 0.6f);
-        rt.sizeDelta = new Vector2(800, 120);
+        rt.sizeDelta = new Vector2(800, 200);
 
         titleObj.transform.localScale = Vector3.zero;
         titleObj.transform.DOScale(Vector3.one, elementScaleDuration).SetEase(Ease.OutBack);
     }
 
-    private void CreateRestartButton(RectTransform parent)
+    private void CreateSubtitleText(RectTransform parent)
     {
-        GameObject btnObj = CreateUIChild("RestartButton", parent);
+        string subtitle = $"Wave {WaveManager.CurrentWave + 1} / {WaveManager.TotalWaves}  —  {WaveManager.GetWaveName()}";
+
+        GameObject subObj = CreateUIChild("Subtitle", parent);
+        TextMeshProUGUI subText = subObj.AddComponent<TextMeshProUGUI>();
+        subText.text = subtitle;
+        subText.color = new Color(0.7f, 0.7f, 0.7f);
+        subText.fontSize = 28;
+        subText.alignment = TextAlignmentOptions.Center;
+        subText.fontStyle = FontStyles.Italic;
+
+        RectTransform rt = subObj.GetComponent<RectTransform>();
+        rt.anchorMin = new Vector2(0.5f, 0.48f);
+        rt.anchorMax = new Vector2(0.5f, 0.48f);
+        rt.sizeDelta = new Vector2(600, 40);
+
+        subObj.transform.localScale = Vector3.zero;
+        subObj.transform.DOScale(Vector3.one, elementScaleDuration)
+            .SetDelay(0.1f)
+            .SetEase(Ease.OutBack);
+    }
+
+    private void CreateActionButton(RectTransform parent, string label, Action onClick)
+    {
+        GameObject btnObj = CreateUIChild("ActionButton", parent);
         Image btnImg = btnObj.AddComponent<Image>();
         btnImg.color = new Color(0.2f, 0.2f, 0.2f, 0.9f);
 
@@ -118,11 +153,11 @@ public class MatchResultSystem : Singleton<MatchResultSystem>
         colors.highlightedColor = new Color(0.4f, 0.4f, 0.4f);
         colors.pressedColor = new Color(0.15f, 0.15f, 0.15f);
         btn.colors = colors;
-        btn.onClick.AddListener(RestartMatch);
+        btn.onClick.AddListener(() => onClick());
 
         RectTransform btnRT = btnObj.GetComponent<RectTransform>();
-        btnRT.anchorMin = new Vector2(0.5f, 0.35f);
-        btnRT.anchorMax = new Vector2(0.5f, 0.35f);
+        btnRT.anchorMin = new Vector2(0.5f, 0.33f);
+        btnRT.anchorMax = new Vector2(0.5f, 0.33f);
         btnRT.sizeDelta = new Vector2(300, 70);
 
         btnObj.transform.localScale = Vector3.zero;
@@ -132,7 +167,7 @@ public class MatchResultSystem : Singleton<MatchResultSystem>
 
         GameObject btnTextObj = CreateUIChild("Text", btnObj.transform);
         TextMeshProUGUI btnText = btnTextObj.AddComponent<TextMeshProUGUI>();
-        btnText.text = "Restart";
+        btnText.text = label;
         btnText.color = Color.white;
         btnText.fontSize = 36;
         btnText.alignment = TextAlignmentOptions.Center;
@@ -158,10 +193,17 @@ public class MatchResultSystem : Singleton<MatchResultSystem>
     }
     #endregion
 
-    private static void RestartMatch()
+    #region Navigation
+    private static void RestartGame()
     {
+        WaveManager.Reset();
+
+        if (ActionSystem.Instance != null)
+            ActionSystem.Instance.StopAllCoroutines();
+
         DOTween.KillAll();
         ActionSystem.ClearAll();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
+    #endregion
 }

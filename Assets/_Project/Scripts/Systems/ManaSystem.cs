@@ -15,7 +15,7 @@ public class ManaSystem : Singleton<ManaSystem>
     {
         base.Awake();
         currentMana = maxMana;
-        manaUI.UpdateManaText(currentMana);
+        manaUI.UpdateManaDisplay(currentMana);
     }
 
     private void OnEnable()
@@ -26,29 +26,27 @@ public class ManaSystem : Singleton<ManaSystem>
         ActionSystem.SubscribeReaction<EnemyTurnGA>(EnemyTurnPostReaction, ReactionTiming.POST);
     }
 
-    private void OnDisable()
-    {
-        ActionSystem.DetachPerformer<SpendManaGA>();
-        ActionSystem.DetachPerformer<RefillManaGA>();
-        ActionSystem.UnsubscribeReaction<EnemyTurnGA>(EnemyTurnPostReaction, ReactionTiming.POST);
-    }
-
     public bool HasEnoughMana(int mana)
     {
         return currentMana >= mana;
     }
 
+    public void NotifyInsufficientMana()
+    {
+        manaUI.ShowInsufficientManaFeedback();
+    }
+
     private IEnumerator SpendManaPerformer(SpendManaGA spendManaGA)
     {
         currentMana -= spendManaGA.Amount;
-        manaUI.UpdateManaText(currentMana);
+        manaUI.UpdateManaDisplay(currentMana);
         yield return null;
     }
 
     private IEnumerator RefillManaPerformer(RefillManaGA refillManaGA)
     {
         currentMana = maxMana;
-        manaUI.UpdateManaText(currentMana);
+        manaUI.UpdateManaDisplay(currentMana);
         yield return null;
     }
 
