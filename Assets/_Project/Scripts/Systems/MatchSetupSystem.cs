@@ -78,6 +78,20 @@ public class MatchSetupSystem : MonoBehaviour
                 new(new AllEnemiesTM(), new DealDamageEffect(8))
             }));
 
+        // 1x Flex — 0 mana, gain 2 Strength (self)
+        deck.Add(CardData.CreateRuntime(
+            "Flex", "Gain 2 Strength", 0, spellImg,
+            null, new List<AutoTargetEffect> {
+                new(new SelfTM(), new ApplyStatusEffect(StatusEffect.Strength, 2))
+            }));
+
+        // 1x Bash — 2 mana, deal 8 damage + apply 2 Vulnerable to all enemies
+        deck.Add(CardData.CreateRuntime(
+            "Bash", "Deal 8 damage\nAll enemies: 2 Vulnerable", 2, attackImg,
+            new DealDamageEffect(8), new List<AutoTargetEffect> {
+                new(new AllEnemiesTM(), new ApplyStatusEffect(StatusEffect.Vulnerable, 2))
+            }));
+
         // 1x Battle Trance — 0 mana, draw 2 cards
         deck.Add(CardData.CreateRuntime(
             "Battle Trance", "Draw 2 cards", 0, spellImg,
