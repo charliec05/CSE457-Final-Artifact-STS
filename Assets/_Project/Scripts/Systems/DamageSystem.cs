@@ -7,6 +7,7 @@ public class DamageSystem : MonoBehaviour
 {
     [SerializeField] private GameObject damageVFX;
     [SerializeField] private float damageDuration;
+    [SerializeField] private GameObject attackOrbVFX;
 
     private WaitForSeconds damageWaitForSeconds;
 
@@ -39,6 +40,15 @@ public class DamageSystem : MonoBehaviour
 
             if (target.GetStatus(StatusEffect.Vulnerable) > 0)
                 finalDamage = Mathf.RoundToInt(finalDamage * 1.5f);
+
+            if (dealDamageGA.ShowAttackOrb && dealDamageGA.Caster != null && attackOrbVFX != null)
+            {
+                GameObject orbObject = Instantiate(attackOrbVFX, dealDamageGA.Caster.transform.position, Quaternion.identity);
+                AttackOrbEffect orbEffect = orbObject.GetComponent<AttackOrbEffect>();
+
+                if (orbEffect != null)
+                    orbEffect.target = target.transform;
+            }
 
             target.Damage(finalDamage);
             Instantiate(damageVFX, target.transform.position, Quaternion.identity);

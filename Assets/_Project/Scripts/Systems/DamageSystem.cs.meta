@@ -1,2 +1,13 @@
 fileFormatVersion: 2
 guid: e5a72edf987e6e44a918879212162925
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - damageVFX: {instanceID: 0}
+  - attackOrbVFX: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -41,7 +41,7 @@ public class MatchSetupSystem : MonoBehaviour
         for (int i = 0; i < 4; i++)
             deck.Add(CardData.CreateRuntime(
                 "Strike", "Deal 6 damage", 1, attackImg,
-                new DealDamageEffect(6), null));
+                new DealDamageEffect(6, true), null));
 
         // 3x Defend — 1 mana, gain 5 block (self)
         for (int i = 0; i < 3; i++)
@@ -62,20 +62,20 @@ public class MatchSetupSystem : MonoBehaviour
         // 1x Power Strike — 2 mana, deal 14 damage (manual target)
         deck.Add(CardData.CreateRuntime(
             "Power Strike", "Deal 14 damage", 2, attackImg,
-            new DealDamageEffect(14), null));
+            new DealDamageEffect(14, true), null));
 
         // 1x Cleave — 1 mana, deal 4 damage to ALL enemies
         deck.Add(CardData.CreateRuntime(
             "Cleave", "Deal 4 damage to ALL enemies", 1, attackImg,
             null, new List<AutoTargetEffect> {
-                new(new AllEnemiesTM(), new DealDamageEffect(4))
+                new(new AllEnemiesTM(), new DealDamageEffect(4, true))
             }));
 
         // 1x Whirlwind — 2 mana, deal 8 damage to ALL enemies
         deck.Add(CardData.CreateRuntime(
             "Whirlwind", "Deal 8 damage to ALL enemies", 2, attackImg,
             null, new List<AutoTargetEffect> {
-                new(new AllEnemiesTM(), new DealDamageEffect(8))
+                new(new AllEnemiesTM(), new DealDamageEffect(8, true))
             }));
 
         // 1x Flex — 0 mana, gain 2 Strength (self)
@@ -88,7 +88,7 @@ public class MatchSetupSystem : MonoBehaviour
         // 1x Bash — 2 mana, deal 8 damage + apply 2 Vulnerable to all enemies
         deck.Add(CardData.CreateRuntime(
             "Bash", "Deal 8 damage\nAll enemies: 2 Vulnerable", 2, attackImg,
-            new DealDamageEffect(8), new List<AutoTargetEffect> {
+            new DealDamageEffect(8, true), new List<AutoTargetEffect> {
                 new(new AllEnemiesTM(), new ApplyStatusEffect(StatusEffect.Vulnerable, 2))
             }));
 

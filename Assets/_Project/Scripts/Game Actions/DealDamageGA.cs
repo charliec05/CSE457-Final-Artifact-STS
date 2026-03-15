@@ -4,6 +4,7 @@ public class DealDamageGA : GameAction, IHaveCaster
 {
     public List<CombatantView> Targets { get; set; }
     public int Amount { get; set; }
+    public bool ShowAttackOrb { get; set; }
 
     public CombatantView Caster { get; private set; }
 
@@ -12,5 +13,6 @@ public class DealDamageGA : GameAction, IHaveCaster
         Amount = amount;
         Targets = new(targets);
         Caster = caster;
+        ShowAttackOrb = false;
     }
 }
